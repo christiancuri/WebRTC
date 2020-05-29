@@ -1,8 +1,17 @@
 export const PEER_CONFIG = {
-  host: '35.194.15.225',
-  port: 9001,
-  path: '/',
-  key: 'peer'
+  host: 'screenshare.smash.cx',
+  path: '/smash',
+  key: 'JKKUJscBgLumup3p',
+  secure: true,
+  config: {
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+      { urls: "stun:stun2.l.google.com:19302" },
+      { urls: 'stun:voice.smash.cx:4446' },
+      { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+    ]
+  }
 }
 
 export function log(title, ...args) {

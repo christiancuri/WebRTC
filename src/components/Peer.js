@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import Streamer from './Streamer'
-import Viewer from './Viewer'
+import React, { useState } from 'react';
+
+import ScreenShare from './ScreenShare'
 
 
 const PeerComponent = () => {
@@ -10,13 +10,10 @@ const PeerComponent = () => {
     <div style={{padding: 50, textAlign: 'center'}}> 
       {type === '' && (
         <>
-          <button style={{padding: '15px 35px 15px 35px', marginRight: 15}} onClick={() => setType('streamer')}>I am streamer</button>
-
-          <button style={{padding: '15px 35px 15px 35px', marginLeft: 15}} onClick={() => setType('viewer')}>I am viewer</button>
+          <button style={{padding: '15px 35px 15px 35px', marginRight: 15}} onClick={() => setType('screenshare')}>ScreenShare</button>
         </>
       )}
-      {type === 'streamer' && (<Streamer/>)}
-      {type === 'viewer' && (<Viewer/>)}
+      {type === 'screenshare' && (<ScreenShare/>)}
 
     </div>
   );
