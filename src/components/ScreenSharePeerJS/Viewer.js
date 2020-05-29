@@ -20,7 +20,7 @@ function Receiver(props) {
     }
   }, [stream])
 
-  const handleInput = (e) => setRoom(e.target.value.trim()) 
+  const handleInput = (e) => setRoom(e.target.value.trim())
 
   const handleJoin = () => {
     if (!room) return alert('Missing room')
