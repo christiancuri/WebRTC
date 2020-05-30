@@ -6,39 +6,13 @@ import io from '../../services/socket'
 
 let peerConnection
 
+const getVideo = () => document.getElementById('video')
+
 function Receiver(props) {
 
   const [room, setRoom] = useState()
 
   // const peer = useRef()
-
-  const getVideo = () => document.getElementById('video')
-
-  io.on('offer', (id, desc) => {
-    peerConnection = new RTCPeerConnection(PEER_CONFIG.config);
-    peerConnection.setRemoteDescription(desc)
-      .then(() => peerConnection.createAnswer())
-      .then(sdp => peerConnection.setLocalDescription(sdp))
-      .then(() => io.emit('answer', id, peerConnection.localDescription));
-
-    peerConnection.ontrack = (e) => {
-      getVideo().srcObject = e.streams[0];
-    };
-    peerConnection.onicecandidate = (e) => {
-      if (e.candidate) {
-        io.emit('candidate', id, e.candidate);
-      }
-    };
-  })
-
-  io.on('candidate', (_, candidate) => 
-    peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
-      .catch(console.error)
-  );
-
-  io.on('broadcaster', () => io.emit('watcher'));
-  
-  io.on('bye', () => peerConnection.close());
 
   const handleInput = (e) => setRoom(e.target.value.trim())
 
@@ -49,6 +23,40 @@ function Receiver(props) {
   const disconnect = () => {
 
   }
+
+  useEffect(() => {
+
+
+io.on('offer', (id, desc) => {
+  peerConnection = new RTCPeerConnection({ // eslint-disable-line no-unused-vars
+    'iceServers': [{
+      'urls': ['stun:stun.l.google.com:19302']
+    }]
+  });
+  peerConnection.setRemoteDescription(desc)
+    .then(() => peerConnection.createAnswer())
+    .then(sdp => peerConnection.setLocalDescription(sdp))
+    .then(() => io.emit('answer', id, peerConnection.localDescription));
+
+  peerConnection.ontrack = (e) => {
+    getVideo().srcObject = e.streams[0];
+  };
+  peerConnection.onicecandidate = (e) => {
+    if (e.candidate) {
+      io.emit('candidate', id, e.candidate);
+    }
+  };
+})
+
+io.on('candidate', (_, candidate) => 
+  peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+    .catch(console.error)
+);
+
+io.on('broadcaster', () => io.emit('watcher'));
+
+io.on('bye', () => peerConnection.close());
+  })
   
 
   return (

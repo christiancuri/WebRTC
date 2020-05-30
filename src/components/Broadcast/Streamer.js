@@ -5,7 +5,12 @@ import io from '../../services/socket'
 
 import { PEER_CONFIG, log } from '../config'
 
-const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: true })
+const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
+  width: window.screen.width > 1920 ? window.screen.width : 192,
+  height: window.screen.height > 1080 ? window.screen.height : 1080,
+  frameRate: 5,
+  cursor: 'always'
+} })
 
 const constraints = {
 	// audio: true,
@@ -21,6 +26,10 @@ let peers = {
 const customId = () => (Math.random().toString(36) + '0000000000000000000').substr(2, 16);
 
 
+
+
+const getVideo = () => document.getElementById('video')
+
 function Streamer(props) {
 
   // const peers = useRef()
@@ -29,7 +38,7 @@ function Streamer(props) {
   const [room, setRoom] = useState()
 
   const call = () => {
-    getDesktopScreen().then(stream => {
+    getCamera().then(stream => {
       getVideo().srcObject = stream
       const id = customId()
       io.emit('broadcaster', id)
@@ -38,40 +47,47 @@ function Streamer(props) {
     })
   }
 
-  io.on('answer', (id, desc) => {
-    console.log(peers.current, desc)
-    peers.current[id].setRemoteDescription({...desc})
+  useEffect(() => {
+
+io.on('answer', (id, desc) => {
+  console.log(peers.current, desc)
+  peers.current[id].setRemoteDescription({...desc})
+})
+
+
+io.on('watcher', id => {
+  const peerConnection = new RTCPeerConnection({ // eslint-disable-line no-unused-vars
+    'iceServers': [{
+      'urls': ['stun:stun.l.google.com:19302']
+    }]
   })
+  peers.current[id] = peerConnection
 
-  io.on('candidate', (id, candidate) => (peers.current[id].addIceCandidate(new RTCIceCandidate(candidate))))
+  const stream = getVideo().srcObject
 
-  io.on('bye', id => {
-    peers.current[id] && peers.current[id].close();
-    delete peers.current[id]
-  });
+  stream.getTracks().forEach(track => peerConnection.addTrack(track, stream))
 
-  io.on('watcher', id => {
-    const peerConnection = new RTCPeerConnection(PEER_CONFIG.config)
-    peers.current[id] = peerConnection
+  peerConnection
+    .createOffer()
+    .then(session => peerConnection.setLocalDescription(session))
+    .then(() => io.emit('offer', id, peerConnection.localDescription))
 
-    const stream = getVideo().srcObject
-
-    stream.getTracks().forEach(track => peerConnection.addTrack(track, stream))
-
-    peerConnection
-      .createOffer()
-      .then(session => peerConnection.setLocalDescription(session))
-      .then(() => io.emit('offer', id, peerConnection.localDescription))
-
-    peerConnection.onicecandidate = (e) => {
-      if (e.candidate) {
-        io.emit('candidate', id, e.candidate)
-      }
+  peerConnection.onicecandidate = (e) => {
+    if (e.candidate) {
+      io.emit('candidate', id, e.candidate)
     }
+  }
+})
+
+io.on('candidate', (id, candidate) => (peers.current[id].addIceCandidate(new RTCIceCandidate(candidate))))
+
+io.on('bye', id => {
+  peers.current[id] && peers.current[id].close();
+  delete peers.current[id]
+});
+
+
   })
-
-  const getVideo = () => document.getElementById('video')
-
 
   const disconnect = () => {
 
