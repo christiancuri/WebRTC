@@ -5,23 +5,23 @@ import io from '../../services/socket'
 import { PEER_CONFIG } from '../config'
 
 const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
+  width: {
+    ideal: 1280,
+    max: 1280,
+  },
+  height: {
+    ideal: 720,
+    max: 720,
+  },
   // width: {
   //   ideal: 1280,
-  //   max: 1280,
+  //   max: 1920,
   // },
   // height: {
   //   ideal: 720,
-  //   max: 720,
+  //   max: 1080,
   // },
-  width: {
-    ideal: 1920,
-    max: 1920,
-  },
-  height: {
-    ideal: 1080,
-    max: 1080,
-  },
-  frameRate: 8,
+  frameRate: 60,
   cursor: 'always'
 } })
 
