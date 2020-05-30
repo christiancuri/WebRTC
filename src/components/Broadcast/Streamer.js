@@ -6,8 +6,14 @@ import io from '../../services/socket'
 import { PEER_CONFIG, log } from '../config'
 
 const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
-  width: window.screen.width > 1920 ? window.screen.width : 192,
-  height: window.screen.height > 1080 ? window.screen.height : 1080,
+  width: {
+    ideal: 1280,
+    max: 1280,
+  },
+  height: {
+    ideal: 720,
+    max: 720,
+  },
   frameRate: 5,
   cursor: 'always'
 } })
@@ -38,7 +44,7 @@ function Streamer(props) {
   const [room, setRoom] = useState()
 
   const call = () => {
-    getCamera().then(stream => {
+    getDesktopScreen().then(stream => {
       getVideo().srcObject = stream
       const id = customId()
       io.emit('broadcaster', id)
