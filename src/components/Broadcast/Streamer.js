@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef, Component } from 'react';
-import Peer from 'peerjs';
+import React, { useState, useEffect } from 'react';
 
 import io from '../../services/socket'
 
-import { PEER_CONFIG, log } from '../config'
+import { PEER_CONFIG } from '../config'
 
 const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
   width: {
@@ -14,31 +13,24 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
     ideal: 720,
     max: 720,
   },
-  frameRate: 5,
+  frameRate: 10,
   cursor: 'always'
 } })
 
 const constraints = {
 	// audio: true,
 	video: {facingMode: "user"}
-};
+}; 
 
 const getCamera = async () => navigator.mediaDevices.getUserMedia(constraints)
 
-let peers = {
-  current: {}
-}
+let peers = {}
 
 const customId = () => (Math.random().toString(36) + '0000000000000000000').substr(2, 16);
-
-
-
 
 const getVideo = () => document.getElementById('video')
 
 function Streamer(props) {
-
-  // const peers = useRef()
 
   const [inCall, setInCall] = useState()
   const [room, setRoom] = useState()
@@ -46,6 +38,7 @@ function Streamer(props) {
   const call = () => {
     getDesktopScreen().then(stream => {
       getVideo().srcObject = stream
+      getVideo().srcObject.oninactive = () => disconnect()
       const id = customId()
       io.emit('broadcaster', id)
       setRoom(id)
@@ -54,49 +47,67 @@ function Streamer(props) {
   }
 
   useEffect(() => {
+    console.log('montou')
+    io.on('answer', (id, desc) => {
+      peers[id].setRemoteDescription({...desc})
+    })
 
-io.on('answer', (id, desc) => {
-  console.log(peers.current, desc)
-  peers.current[id].setRemoteDescription({...desc})
-})
 
+    io.on('watcher', id => {
+      const peerConnection = new RTCPeerConnection(PEER_CONFIG.config)
+      peers[id] = peerConnection
 
-io.on('watcher', id => {
-  const peerConnection = new RTCPeerConnection({ // eslint-disable-line no-unused-vars
-    'iceServers': [{
-      'urls': ['stun:stun.l.google.com:19302']
-    }]
-  })
-  peers.current[id] = peerConnection
+      peerConnection.addStream(getVideo().srcObject)
 
-  const stream = getVideo().srcObject
+      peerConnection
+        .createOffer()
+        .then(session => peerConnection.setLocalDescription(new RTCSessionDescription(session)))
+        .then(() => io.emit('offer', id, peerConnection.localDescription))
 
-  stream.getTracks().forEach(track => peerConnection.addTrack(track, stream))
+      peerConnection.onicecandidate = (e) => {
+        if (e.candidate) {
+          io.emit('candidate', id, e.candidate)
+        }
+      }
+    })
 
-  peerConnection
-    .createOffer()
-    .then(session => peerConnection.setLocalDescription(session))
-    .then(() => io.emit('offer', id, peerConnection.localDescription))
+    io.on('candidate', (id, candidate) => (peers[id].addIceCandidate(new RTCIceCandidate(candidate))))
 
-  peerConnection.onicecandidate = (e) => {
-    if (e.candidate) {
-      io.emit('candidate', id, e.candidate)
+    io.on('bye', id => {
+      peers[id] && peers[id].close();
+      delete peers[id]
+    });
+
+    return () => {
+      [
+        'answer',
+        'watcher',
+        'candidate',
+        'bye',
+      ].forEach(fn => io.off(fn))
     }
-  }
-})
-
-io.on('candidate', (id, candidate) => (peers.current[id].addIceCandidate(new RTCIceCandidate(candidate))))
-
-io.on('bye', id => {
-  peers.current[id] && peers.current[id].close();
-  delete peers.current[id]
-});
-
-
   })
 
   const disconnect = () => {
-
+    console.log('disconnect')
+    for(const key of Object.keys(peers)) {
+      if (peers[key]) {
+        try {
+          peers[key].close()
+          delete peers[key]
+        } catch (error) {}
+      }
+    }
+    setInCall(false)
+    setRoom('')
+    const video = getVideo()
+    video.srcObject.getVideoTracks().forEach(track => {
+      track.stop()
+      video.srcObject.removeTrack(track);
+    });
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
   }
 
   return (
