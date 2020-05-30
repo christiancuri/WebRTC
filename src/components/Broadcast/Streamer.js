@@ -6,32 +6,28 @@ import { PEER_CONFIG } from '../config'
 
 const FRAME_RATE = {
   1: { 
-    ideal: 60, 
-    max: 60
-  },
-  2: {
-    ideal: 45, 
-    max: 45
-  },
-  3: {
     ideal: 30, 
     max: 30
   },
-  4: {
-    ideal: 20, 
-    max: 30
+  2: {
+    ideal: 25, 
+    max: 25
   },
-  5: {
+  3: {
+    ideal: 20, 
+    max: 20
+  },
+  4: {
     ideal: 15, 
     max: 20
   },
-  6: {
+  5: {
     ideal: 10, 
     max: 15
   },
-  7: {
-    ideal: 10,
-    max: 15
+  6: {
+    ideal: 5, 
+    max: 10
   }
 }
 
@@ -49,7 +45,6 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
   displaySurface: 'monitor',
   logicalSurface: true,
   maxBitrate: 60000,
-  maxFramerate: 5,
   scaleResolutionDownBy: 2,
   // width: {
   //   ideal: 1920,
@@ -86,17 +81,19 @@ function Streamer(props) {
   useState(() => {
     try {
       let newFrame = FRAME_RATE[1]
-      if (total >= 1) {
+      if (total >= 1 && total < 6) {
         newFrame = FRAME_RATE[total]
-      } else if (total >=7) {
-        newFrame = FRAME_RATE[7]
+      } else if (total >= 6) {
+        newFrame = FRAME_RATE[6]
       }
-      // getVideo().srcObject.getVideoTracks().forEach(track => track.applyConstraints(newFrame))
-      const track = getVideo().srcObject.getVideoTracks()[0]
-      if (track) {
-        track.applyConstraints(newFrame)
-      }
-    } catch (error) {}
+      getVideo().srcObject.getVideoTracks().forEach(track => track.applyConstraints(newFrame))
+      // const track = getVideo().srcObject.getVideoTracks()[0]
+      // if (track) {
+      //   track.applyConstraints(newFrame)
+      // }
+    } catch (error) {
+      console.error(error)
+    }
   }, [total])
 
   const call = () => {
