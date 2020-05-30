@@ -13,6 +13,10 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
     ideal: 720,
     max: 720,
   },
+  aspectRatio: 1.7777777777777777,
+  resizeMode: 'crop-and-scale',
+  displaySurface: 'monitor',
+  logicalSurface: true,
   // width: {
   //   ideal: 1280,
   //   max: 1920,
@@ -21,7 +25,7 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
   //   ideal: 720,
   //   max: 1080,
   // },
-  frameRate: 30,
+  frameRate: 60,
   cursor: 'always'
 } })
 
