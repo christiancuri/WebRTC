@@ -54,7 +54,7 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
   //   ideal: 1080,
   //   max: 1080,
   // },
-  frameRate: FRAME_RATE[1],
+  frameRate: FRAME_RATE[5],
   // frameRate: 5,
   cursor: 'always'
 } })
