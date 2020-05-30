@@ -56,8 +56,8 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
   //   ideal: 1080,
   //   max: 1080,
   // },
-  // frameRate: FRAME_RATE[0],
-  frameRate: 5,
+  frameRate: FRAME_RATE[1],
+  // frameRate: 5,
   cursor: 'always'
 } })
 
@@ -80,9 +80,19 @@ function Streamer(props) {
   const [room, setRoom] = useState()
   const [total, setTotal] = useState(0)
 
-  // useState(() => {
-  //   getVideo().
-  // })
+  useState(() => {
+    let newFrame = FRAME_RATE[1]
+    if (total >= 1) {
+      newFrame = FRAME_RATE[total]
+    } else if (total >=7) {
+      newFrame = FRAME_RATE[7]
+    }
+    // getVideo().srcObject.getVideoTracks().forEach(track => track.applyConstraints(newFrame))
+    const track = getVideo().srcObject.getVideoTracks()[0]
+    if (track) {
+      track.applyConstraints(newFrame)
+    }
+  }, [total])
 
   const call = () => {
     getDesktopScreen().then(stream => {
