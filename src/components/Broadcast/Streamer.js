@@ -46,6 +46,7 @@ function Streamer(props) {
 
   const [inCall, setInCall] = useState()
   const [room, setRoom] = useState()
+  const [total, setTotal] = useState(0)
 
   const call = () => {
     getDesktopScreen().then(stream => {
@@ -66,6 +67,7 @@ function Streamer(props) {
 
 
     io.on('watcher', id => {
+      setTotal(total + 1)
       const peerConnection = new RTCPeerConnection(PEER_CONFIG.config)
       peers[id] = peerConnection
 
@@ -86,6 +88,7 @@ function Streamer(props) {
     io.on('candidate', (id, candidate) => (peers[id].addIceCandidate(new RTCIceCandidate(candidate))))
 
     io.on('bye', id => {
+      setTotal(total - 1)
       peers[id] && peers[id].close();
       delete peers[id]
     });
@@ -112,6 +115,7 @@ function Streamer(props) {
     }
     setInCall(false)
     setRoom('')
+    setTotal(0)
     const video = getVideo()
     video.srcObject.getVideoTracks().forEach(track => {
       track.stop()
@@ -137,6 +141,9 @@ function Streamer(props) {
       <br/>
       <br/>
       {room && (<h4>Your room id: <br/>{room}</h4>)}
+      <br/>
+      <br/>
+      {total && (<h4>Total in room: <br/>{total}</h4>)}
       <br/>
       <video id="video" autoPlay muted style={{width: '100%'}}></video>
     </div>
