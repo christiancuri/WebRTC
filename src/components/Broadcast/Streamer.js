@@ -4,27 +4,59 @@ import io from '../../services/socket'
 
 import { PEER_CONFIG } from '../config'
 
+const FRAME_RATE = {
+  1: { 
+    ideal: 60, 
+    max: 60
+  },
+  2: {
+    ideal: 45, 
+    max: 45
+  },
+  3: {
+    ideal: 30, 
+    max: 30
+  },
+  4: {
+    ideal: 20, 
+    max: 30
+  },
+  5: {
+    ideal: 15, 
+    max: 20
+  },
+  6: {
+    ideal: 10, 
+    max: 15
+  },
+  7: {
+    ideal: 10,
+    max: 15
+  }
+}
+
 const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
-  // width: {
-  //   ideal: 1280,
-  //   max: 1280,
-  // },
-  // height: {
-  //   ideal: 720,
-  //   max: 720,
-  // },
+  width: {
+    ideal: 1660,
+    max: 1660,
+  },
+  height: {
+    ideal: 900,
+    max: 900,
+  },
   aspectRatio: 1.7777777777777777,
   resizeMode: 'crop-and-scale',
   displaySurface: 'monitor',
   logicalSurface: true,
-  width: {
-    ideal: 1920,
-    max: 1920,
-  },
-  height: {
-    ideal: 1080,
-    max: 1080,
-  },
+  // width: {
+  //   ideal: 1920,
+  //   max: 1920,
+  // },
+  // height: {
+  //   ideal: 1080,
+  //   max: 1080,
+  // },
+  // frameRate: FRAME_RATE[0],
   frameRate: 5,
   cursor: 'always'
 } })
@@ -47,6 +79,10 @@ function Streamer(props) {
   const [inCall, setInCall] = useState()
   const [room, setRoom] = useState()
   const [total, setTotal] = useState(0)
+
+  // useState(() => {
+  //   getVideo().
+  // })
 
   const call = () => {
     getDesktopScreen().then(stream => {
