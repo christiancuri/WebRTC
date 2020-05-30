@@ -48,6 +48,9 @@ const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ vi
   resizeMode: 'crop-and-scale',
   displaySurface: 'monitor',
   logicalSurface: true,
+  maxBitrate: 60000,
+  maxFramerate: 5,
+  scaleResolutionDownBy: 2,
   // width: {
   //   ideal: 1920,
   //   max: 1920,
