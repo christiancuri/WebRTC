@@ -17,7 +17,17 @@ export const PEER_CONFIG = {
         url: 'turn:turn.smash.cx:5349',
         username: 'smash',
         credential: 'hc4qjVYChz3kBRhN',
-      }
+      },
+      { 
+        url: 'turns:meet.smash.cx:443?transport=tcp',
+        username: 'meet.smash.cx',
+        credential: '60xNNKDk1zLZSAZi', 
+      },
+      { 
+        url: 'turn:meet.smash.cx:4446?transport=udp',
+        username: 'meet.smash.cx',
+        credential: '60xNNKDk1zLZSAZi',
+      },
     ]
     // iceServers: [
     //   {
