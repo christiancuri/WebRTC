@@ -14,7 +14,7 @@ export const PEER_CONFIG = {
       { url: 'stun:stun.services.mozilla.com' },
       { url: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
       {
-        url: 'turn:turn.smash.cx:5349',
+        url: 'turn:18.220.202.114:5349',
         username: 'smash',
         credential: 'hc4qjVYChz3kBRhN',
       }
