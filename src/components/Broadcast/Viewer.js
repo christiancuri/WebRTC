@@ -41,6 +41,7 @@ function Receiver(props) {
   }
 
   useEffect(() => {
+    // Enable Listeners on Compoment Mount
     io.on('offer', (id, desc) => {
       peerConnection = new RTCPeerConnection(PEER_CONFIG.config);
       peerConnection.setRemoteDescription(desc)
@@ -68,6 +69,7 @@ function Receiver(props) {
     io.on('bye', () => peerConnection.close());
 
     return () => {
+      // Disable Listeners on Component Umount (Prevent duplicate listeners)
       [
         'offer',
         'candidate',

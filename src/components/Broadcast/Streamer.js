@@ -104,7 +104,7 @@ function Streamer(props) {
   }
 
   useEffect(() => {
-    console.log('montou')
+    // Enable Listeners on Compoment Mount
     io.on('answer', (id, desc) => {
       peers[id].setRemoteDescription({...desc})
     })
@@ -138,6 +138,7 @@ function Streamer(props) {
     });
 
     return () => {
+      // Disable Listeners on Component Umount (Prevent duplicate listeners)
       [
         'answer',
         'watcher',
