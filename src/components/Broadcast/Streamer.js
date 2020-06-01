@@ -34,23 +34,22 @@ const FRAME_RATE = {
 const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ 
   video: {
     width: {
-      ideal: 1660,
+      ideal: 1280,
       max: 1660,
     },
     height: {
-      ideal: 900,
+      ideal: 720,
       max: 900,
     },
     aspectRatio: 1.7777777777777777,
+    facingMode: "user",
     resizeMode: 'crop-and-scale',
     displaySurface: 'monitor',
     logicalSurface: true,
-    maxBitrate: 60000,
-    scaleResolutionDownBy: 2,
     cursor: 'always',
     frameRate: { 
-      ideal: 8, 
-      max: 10
+      ideal: 10, 
+      max: 15
     },
     // frameRate: FRAME_RATE[5],
     // frameRate: 5,
