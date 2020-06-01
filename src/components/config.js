@@ -5,10 +5,21 @@ export const PEER_CONFIG = {
   secure: true,
   config: {
     'iceServers': [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      { urls: "stun:stun2.l.google.com:19302" },
-      { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+      { url: 'stun:stun.smash.cx:5349' },
+      { url: 'stun:stun.l.google.com:19302' },
+      { url: 'stun:stun1.l.google.com:19302' },
+      { url: 'stun:stun2.l.google.com:19302' },
+      { url: 'stun:stun3.l.google.com:19302' },
+      { url: 'stun:stun4.l.google.com:19302' },
+      { url: 'stun:stun.services.mozilla.com' },
+      { url: 'stun:meet-jit-si-turnrelay.jitsi.net:443' },
+      {
+        url: 'turn:turn.smash.cx:5349',
+        username: 'smash',
+        credential: 'hc4qjVYChz3kBRhN',
+      },
+      { url: 'turn:meet.smash.cx:443?transport=tcp' },
+      { url: 'turn:meet.smash.cx:4446?transport=udp' },
     ]
     // iceServers: [
     //   {
