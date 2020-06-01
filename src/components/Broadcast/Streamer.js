@@ -31,40 +31,38 @@ const FRAME_RATE = {
   }
 }
 
-const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ video: {
-  width: {
-    ideal: 1660,
-    max: 1660,
-  },
-  height: {
-    ideal: 900,
-    max: 900,
-  },
-  aspectRatio: 1.7777777777777777,
-  resizeMode: 'crop-and-scale',
-  displaySurface: 'monitor',
-  logicalSurface: true,
-  maxBitrate: 60000,
-  scaleResolutionDownBy: 2,
-  // width: {
-  //   ideal: 1920,
-  //   max: 1920,
-  // },
-  // height: {
-  //   ideal: 1080,
-  //   max: 1080,
-  // },
-  frameRate: FRAME_RATE[5],
-  // frameRate: 5,
-  cursor: 'always'
-} })
+const getDesktopScreen = async () => navigator.mediaDevices.getDisplayMedia({ 
+  video: {
+    width: {
+      ideal: 1660,
+      max: 1660,
+    },
+    height: {
+      ideal: 900,
+      max: 900,
+    },
+    aspectRatio: 1.7777777777777777,
+    resizeMode: 'crop-and-scale',
+    displaySurface: 'monitor',
+    logicalSurface: true,
+    maxBitrate: 60000,
+    scaleResolutionDownBy: 2,
+    cursor: 'always',
+    frameRate: { 
+      ideal: 5, 
+      max: 10
+    },
+    // frameRate: FRAME_RATE[5],
+    // frameRate: 5,
+  }
+})
 
-const constraints = {
+const getCamera = async () => navigator.mediaDevices.getUserMedia({
 	// audio: true,
-	video: {facingMode: "user"}
-}; 
-
-const getCamera = async () => navigator.mediaDevices.getUserMedia(constraints)
+	video: {
+    facingMode: "user"
+  }
+})
 
 let peers = {}
 
@@ -78,23 +76,23 @@ function Streamer(props) {
   const [room, setRoom] = useState()
   const [total, setTotal] = useState(0)
 
-  useState(() => {
-    try {
-      let newFrame = FRAME_RATE[1]
-      if (total >= 1 && total < 6) {
-        newFrame = FRAME_RATE[total]
-      } else if (total >= 6) {
-        newFrame = FRAME_RATE[6]
-      }
-      getVideo().srcObject.getVideoTracks().forEach(track => track.applyConstraints(newFrame))
-      // const track = getVideo().srcObject.getVideoTracks()[0]
-      // if (track) {
-      //   track.applyConstraints(newFrame)
-      // }
-    } catch (error) {
-      console.error(error)
-    }
-  }, [total])
+  // useState(() => {
+  //   try {
+  //     let newFrame = FRAME_RATE[1]
+  //     if (total >= 1 && total < 6) {
+  //       newFrame = FRAME_RATE[total]
+  //     } else if (total >= 6) {
+  //       newFrame = FRAME_RATE[6]
+  //     }
+  //     getVideo().srcObject.getVideoTracks().forEach(track => track.applyConstraints(newFrame))
+  //     // const track = getVideo().srcObject.getVideoTracks()[0]
+  //     // if (track) {
+  //     //   track.applyConstraints(newFrame)
+  //     // }
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }, [total])
 
   const call = () => {
     getDesktopScreen().then(stream => {

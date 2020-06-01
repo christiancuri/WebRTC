@@ -5,7 +5,7 @@ export const PEER_CONFIG = {
   secure: true,
   config: {
     'iceServers': [
-      { url: 'stun:stun.smash.cx:5349' },
+      { url: 'stun:18.220.202.114:5349' },
       { url: 'stun:stun.l.google.com:19302' },
       { url: 'stun:stun1.l.google.com:19302' },
       { url: 'stun:stun2.l.google.com:19302' },
@@ -17,7 +17,17 @@ export const PEER_CONFIG = {
         url: 'turn:18.220.202.114:5349',
         username: 'smash',
         credential: 'hc4qjVYChz3kBRhN',
-      }
+      },
+      { 
+        url: 'turns:18.220.202.114:443?transport=tcp',
+        username: 'meet.smash.cx',
+        credential: '60xNNKDk1zLZSAZi', 
+      },
+      { 
+        url: 'turn:18.220.202.114:4446?transport=udp',
+        username: 'meet.smash.cx:443',
+        credential: '60xNNKDk1zLZSAZi',
+      },
     ]
     // iceServers: [
     //   {
